@@ -8,8 +8,8 @@
         <version>2.3.1.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>cn.com.seu</groupId>
-    <artifactId>tonguetip</artifactId>
+    <groupId>seu.moyu.demo</groupId>
+    <artifactId>booking</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>tonguetip</name>
     <description>Demo project for Spring Boot</description>
