@@ -29,17 +29,22 @@ public class Order implements Serializable {
     @TableId(value = "uuid", type = IdType.AUTO)
     private Integer uuid;
 
+    @TableField("startTime")
     private LocalDateTime startDate;
 
+    @TableField("endTime")
     private LocalDateTime endDate;
 
+    @TableField("price")
     private Double price;
 
+    @TableField("state")
     private Integer state;
 
     @TableField("hotelId")
     private Integer hotelId;
 
+    @TableField("star")
     private Integer star;
 
     @TableField("roomId")
@@ -47,6 +52,4 @@ public class Order implements Serializable {
 
     @TableField("userId")
     private Integer userId;
-
-
 }

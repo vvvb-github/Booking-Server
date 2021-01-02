@@ -28,10 +28,13 @@ public class Room implements Serializable {
     @TableId(value = "uuid", type = IdType.AUTO)
     private Integer uuid;
 
+    @TableField("title")
     private String title;
 
+    @TableField("introduction")
     private String introduction;
 
+    @TableField("price")
     private Double price;
 
     @TableField("hotelId")

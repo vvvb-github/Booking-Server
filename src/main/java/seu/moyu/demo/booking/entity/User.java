@@ -31,8 +31,10 @@ public class User implements Serializable {
     @TableField("nickName")
     private String nickName;
 
+    @TableField("password")
     private String password;
 
+    @TableField("email")
     private String email;
 
     @TableField("phoneNumber")

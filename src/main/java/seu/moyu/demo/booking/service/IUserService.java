@@ -13,4 +13,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IUserService extends IService<User> {
 
+    public User CheckUser(String email, String password);
+
+    public String GenerateToken(Integer userid);
+
+    public Integer AnalyzeToken(String token);
+
 }
