@@ -55,9 +55,59 @@ public class ServerController {
         } catch (Exception e) {
             e.printStackTrace();
             jsonObject.put("status", 500);
-            jsonObject.put("msg", "用户名或密码错误！");
+            jsonObject.put("msg", "用户名或密码错误!");
         }
         return jsonObject;
     }
 
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
+    public JSONObject Register(String userName,String password,String email){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            if (userService.FindUser(email) == 0) {
+                userService.AddUser(email,userName,password);
+                jsonObject.put("status", 200);
+            }
+            else {
+                jsonObject.put("status", 404);
+                jsonObject.put("msg", "用户已存在!");
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            jsonObject.put("status", 500);
+            jsonObject.put("msg","未知错误!");
+        }
+        return jsonObject;
+    }
+
+    @RequestMapping(value = "/reset", method = RequestMethod.GET)
+    public JSONObject Reset(String email,String password){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            userService.ResetPassword(email,password);
+            jsonObject.put("status", 200);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            jsonObject.put("status", 500);
+            jsonObject.put("msg", "修改失败！");
+        }
+        return jsonObject;
+    }
+
+    @RequestMapping(value = "/edit", method = RequestMethod.GET)
+    public JSONObject Edit(String token,String nickName,String phoneNumber,String realName,String idCardNumber){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            userService.ChangeInformation(token,nickName,phoneNumber,realName,idCardNumber);
+            jsonObject.put("status", 200);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            jsonObject.put("status", 500);
+            jsonObject.put("msg", "修改失败！");
+        }
+        return jsonObject;
+    }
 }

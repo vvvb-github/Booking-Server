@@ -1,6 +1,8 @@
 package seu.moyu.demo.booking.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import seu.moyu.demo.booking.entity.User;
 import seu.moyu.demo.booking.mapper.UserMapper;
 import seu.moyu.demo.booking.service.IUserService;
@@ -67,5 +69,51 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         DecodedJWT jwt = verifier.verify(token);
         Integer userId = jwt.getClaim("userId").asInt();
         return userId;
+    }
+
+    @Override
+    public Integer FindUser(String email){
+        QueryWrapper wrapper = new QueryWrapper<User>();
+        wrapper.eq("email", email);
+        List<User> p = list(wrapper);
+        if(p.isEmpty()) return 0;
+        return 1;
+    }
+
+    @Override
+    public Integer AddUser(String email, String userName, String password) {
+        User user = new User();
+        user.setEmail(email);
+        user.setPassword(password);
+        user.setNickName(userName);
+        user.setIconUrl("");
+        user.setIdCardNumber("empty");
+        user.setRealName("");
+        user.setPhoneNumber("");
+        save(user);
+        return 1;
+    }
+
+    @Override
+    public Integer ResetPassword(String email,String password){
+        User user = new User();
+        QueryWrapper wrapper = new QueryWrapper();
+        wrapper.eq("email",email);
+        user.setPassword(password);
+        update(user,wrapper);
+        return 1;
+    }
+
+    @Override
+    public void ChangeInformation(String token, String nickName, String phoneNumber, String realName, String idCardNumber) {
+        User user = new User();
+        Integer uuid = AnalyzeToken(token);
+        QueryWrapper wrapper = new QueryWrapper();
+        wrapper.eq("uuid",uuid);
+        user.setNickName(nickName);
+        user.setIdCardNumber(idCardNumber);
+        user.setRealName(realName);
+        user.setPhoneNumber(phoneNumber);
+        update(user,wrapper);
     }
 }

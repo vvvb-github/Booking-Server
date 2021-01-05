@@ -19,4 +19,11 @@ public interface IUserService extends IService<User> {
 
     public Integer AnalyzeToken(String token);
 
+    public Integer FindUser(String email);
+
+    public Integer AddUser(String email,String userName,String password);
+
+    public Integer ResetPassword(String email,String password);
+
+    public void ChangeInformation(String token,String nickName,String phoneNumber,String realName,String idCardNumber);
 }
