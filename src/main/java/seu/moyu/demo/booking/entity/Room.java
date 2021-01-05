@@ -43,5 +43,4 @@ public class Room implements Serializable {
     @TableField("pictureUrl")
     private String pictureUrl;
 
-
 }

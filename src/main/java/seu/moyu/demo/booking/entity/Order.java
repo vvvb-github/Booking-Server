@@ -29,10 +29,10 @@ public class Order implements Serializable {
     @TableId(value = "uuid", type = IdType.AUTO)
     private Integer uuid;
 
-    @TableField("startTime")
+    @TableField("startDate")
     private LocalDateTime startDate;
 
-    @TableField("endTime")
+    @TableField("endDate")
     private LocalDateTime endDate;
 
     @TableField("price")
@@ -52,4 +52,7 @@ public class Order implements Serializable {
 
     @TableField("userId")
     private Integer userId;
+
+    @TableField("customerNumber")
+    private Integer customerNumber;
 }

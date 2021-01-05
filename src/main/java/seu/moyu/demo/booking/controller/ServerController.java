@@ -110,4 +110,30 @@ public class ServerController {
         }
         return jsonObject;
     }
+
+    @RequestMapping(value = "/rate", method = RequestMethod.GET)
+    public JSONObject Rate(String token,int star,int orderID){
+        JSONObject jsonObject = new JSONObject();
+        try{
+            int res = orderService.RateRoom(token,star,orderID);
+            if(res == -1){
+                jsonObject.put("status", 501);
+                jsonObject.put("msg", "订单信息错误，请刷新！");
+            }
+            else if(res==-2){
+                jsonObject.put("status", 502);
+                jsonObject.put("msg", "该订单不能评价！");
+            }
+            else{
+                jsonObject.put("status", 200);
+            }
+
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            jsonObject.put("status", 500);
+            jsonObject.put("msg", "登录失效，请刷新！");
+        }
+        return jsonObject;
+    }
 }

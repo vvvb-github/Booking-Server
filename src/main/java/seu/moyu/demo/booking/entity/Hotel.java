@@ -43,5 +43,12 @@ public class Hotel implements Serializable {
     @TableField("pictureUrl")
     private String pictureUrl;
 
+    @TableField("minPrice")
+    private double minPrice;
 
+    @TableField("stars")
+    private double stars;
+
+    @TableField("commentNumber")
+    private Integer commentNumber;
 }
