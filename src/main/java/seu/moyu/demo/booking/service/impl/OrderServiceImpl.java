@@ -23,7 +23,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     private IUserService userService;
 
     @Override
-    public int RateRoom(String token, int star, int orderID) {
+    public int RateOrder(String token, int star, int orderID) {
         Integer uuid = userService.AnalyzeToken(token);
         QueryWrapper wrapper = new QueryWrapper();
         wrapper.eq("uuid",orderID);
@@ -37,6 +37,22 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         order.setStar(star);
         order.setState(2);
         update(order,wrapper);
+        return 0;
+    }
+
+    @Override
+    public int CancelOrder(String token, int orderID) {
+        Integer uuid = userService.AnalyzeToken(token);
+        QueryWrapper wrapper = new QueryWrapper();
+        wrapper.eq("uuid",orderID);
+        Order order = getOne(wrapper);
+        if(order.getUserId() != uuid){
+            return -1; //用户不同
+        }
+        if(order.getState() != 0){
+            return -2; //不能退订
+        }
+        remove(wrapper);
         return 0;
     }
 }
