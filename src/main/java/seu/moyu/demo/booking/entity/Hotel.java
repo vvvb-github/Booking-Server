@@ -51,4 +51,7 @@ public class Hotel implements Serializable {
 
     @TableField("commentNumber")
     private Integer commentNumber;
+
+    @TableField("phone")
+    private String phone;
 }

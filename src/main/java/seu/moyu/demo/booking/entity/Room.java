@@ -43,4 +43,6 @@ public class Room implements Serializable {
     @TableField("pictureUrl")
     private String pictureUrl;
 
+    @TableField("peopleNumber")
+    private Integer peopleNumber;
 }
