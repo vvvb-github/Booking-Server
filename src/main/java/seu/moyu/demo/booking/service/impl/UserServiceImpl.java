@@ -3,6 +3,9 @@ package seu.moyu.demo.booking.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import seu.moyu.demo.booking.entity.User;
 import seu.moyu.demo.booking.mapper.UserMapper;
 import seu.moyu.demo.booking.service.IUserService;
@@ -19,6 +22,11 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import java.io.File;
+import java.util.logging.Logger;
+
 /**
  * <p>
  *  服务实现类
@@ -30,10 +38,37 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
 
+    /**
+     * Spring Boot 提供了一个发送邮件的简单抽象，使用的是下面这个接口，这里直接注入即可使用
+     */
+    @Autowired
+    private JavaMailSender mailSender;
+
+    /**
+     * 配置文件中我的qq邮箱
+     */
+    private String from = "vvvb100@163.com";
+
     //过期时间
     private static final long EXPIRE_TIME = 60 * 60 * 1000;
     //私钥
     private static final String TOKEN_SECRET = "privateKey";
+
+    @Override
+    public void sendSimpleMail(String to, String subject, String content) {
+        //创建SimpleMailMessage对象
+        SimpleMailMessage message = new SimpleMailMessage();
+        //邮件发送人
+        message.setFrom(from);
+        //邮件接收人
+        message.setTo(to);
+        //邮件主题
+        message.setSubject(subject);
+        //邮件内容
+        message.setText(content);
+        //发送邮件
+        mailSender.send(message);
+    }
 
     @Override
     public User CheckUser(String email, String password) {

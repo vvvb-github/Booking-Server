@@ -9,6 +9,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import seu.moyu.demo.booking.service.IUserService;
 
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * <p>
  *  服务实现类
@@ -28,7 +32,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         QueryWrapper wrapper = new QueryWrapper();
         wrapper.eq("uuid",orderID);
         Order order = getOne(wrapper);
-        if(order.getUserId() != uuid){
+        if(!order.getUserId().equals(uuid)){
             return -1; //用户不同
         }
         if(order.getState() != 1){
@@ -46,7 +50,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         QueryWrapper wrapper = new QueryWrapper();
         wrapper.eq("uuid",orderID);
         Order order = getOne(wrapper);
-        if(order.getUserId() != uuid){
+        if(!order.getUserId().equals(uuid)){
             return -1; //用户不同
         }
         if(order.getState() != 0){
@@ -55,4 +59,32 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         remove(wrapper);
         return 0;
     }
+
+    @Override
+    public int ReserveHotel(String token, Integer hotelId, Integer roomId, double price, Date startTime, Date endTime, Integer customerNumber) {
+        Integer uuid = userService.AnalyzeToken(token);
+        Order order = new Order();
+        order.setUserId(uuid);
+        order.setHotelId(hotelId);
+        order.setRoomId(roomId);
+        order.setStartDate(startTime);
+        order.setEndDate(endTime);
+        order.setPrice(price);
+        order.setCustomerNumber(customerNumber);
+        order.setState(0);
+        save(order);
+        return 0;
+    }
+
+    @Override
+    public List<Order> FindOrder(String token) {
+        List<Order> order = new ArrayList<>();
+        Integer uuid = userService.AnalyzeToken(token);
+        QueryWrapper wrapper = new QueryWrapper();
+        wrapper.eq("userId",uuid);
+        order = list(wrapper);
+        return order;
+    }
+
+
 }

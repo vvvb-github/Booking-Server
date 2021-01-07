@@ -1,5 +1,7 @@
 package seu.moyu.demo.booking.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import seu.moyu.demo.booking.entity.Hotel;
 import seu.moyu.demo.booking.mapper.HotelMapper;
 import seu.moyu.demo.booking.service.IHotelService;
@@ -20,7 +22,7 @@ import java.util.List;
 @Service
 public class HotelServiceImpl extends ServiceImpl<HotelMapper, Hotel> implements IHotelService {
 
-    private boolean checkString(String a,String b){
+    private boolean CheckString(String a,String b){
         int cnt = 0;
         System.out.println(a + "," + b);
 
@@ -31,23 +33,29 @@ public class HotelServiceImpl extends ServiceImpl<HotelMapper, Hotel> implements
                     break;
                 }
         }
-        System.out.println(cnt + " " + b.length());
         if(cnt * 2 >= b.length())return true;
         return false;
     }
+
     @Override
     public List<Hotel> Search(String parameter) {
         List<Hotel> HotelList = list();
         List<Hotel> res = new ArrayList<>();
         int cnt = 0;
         for(int i = 0; i < HotelList.size() ; i++){
-            if(checkString(parameter,HotelList.get(i).getHotelName()) == true){
-                System.out.println("hello");
+            if(CheckString(parameter,HotelList.get(i).getHotelName()) == true){
                 res.add(HotelList.get(i));
                 cnt++;
             }
         }
-        if(cnt == 0)return HotelList;
+        if(cnt == 0) return HotelList;
         else return res;
+    }
+
+    @Override
+    public Hotel FindHotel(Integer hotelId){
+        Hotel hotel = new Hotel();
+        hotel = getById(hotelId);
+        return hotel;
     }
 }

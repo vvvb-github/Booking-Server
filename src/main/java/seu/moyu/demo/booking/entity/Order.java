@@ -9,7 +9,7 @@ import java.io.Serializable;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-
+import java.sql.Date;
 /**
  * <p>
  * 
@@ -30,10 +30,10 @@ public class Order implements Serializable {
     private Integer uuid;
 
     @TableField("startDate")
-    private LocalDateTime startDate;
+    private Date startDate;
 
     @TableField("endDate")
-    private LocalDateTime endDate;
+    private Date endDate;
 
     @TableField("price")
     private Double price;

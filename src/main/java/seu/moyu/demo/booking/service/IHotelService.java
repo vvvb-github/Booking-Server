@@ -15,4 +15,5 @@ import java.util.List;
  */
 public interface IHotelService extends IService<Hotel> {
     public List<Hotel> Search(String parameter);
+    public Hotel FindHotel(Integer hotelId);
 }

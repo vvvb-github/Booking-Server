@@ -26,4 +26,6 @@ public interface IUserService extends IService<User> {
     public Integer ResetPassword(String email,String password);
 
     public void ChangeInformation(String token,String nickName,String phoneNumber,String realName,String idCardNumber);
+
+    public void sendSimpleMail(String to, String subject, String content);
 }

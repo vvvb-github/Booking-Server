@@ -1,5 +1,6 @@
 package seu.moyu.demo.booking.service;
 
+import seu.moyu.demo.booking.entity.Hotel;
 import seu.moyu.demo.booking.entity.Room;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -12,5 +13,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @since 2021-01-01
  */
 public interface IRoomService extends IService<Room> {
-
+    public Room FindRoom(Integer roomId);
 }

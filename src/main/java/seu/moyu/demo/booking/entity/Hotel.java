@@ -37,8 +37,8 @@ public class Hotel implements Serializable {
     @TableField("location")
     private String location;
 
-    @TableField("roomList")
-    private String roomList;
+    @TableField("room")
+    private String room;
 
     @TableField("pictureUrl")
     private String pictureUrl;

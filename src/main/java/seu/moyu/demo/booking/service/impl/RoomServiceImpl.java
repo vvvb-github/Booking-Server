@@ -1,5 +1,6 @@
 package seu.moyu.demo.booking.service.impl;
 
+import seu.moyu.demo.booking.entity.Hotel;
 import seu.moyu.demo.booking.entity.Room;
 import seu.moyu.demo.booking.mapper.RoomMapper;
 import seu.moyu.demo.booking.service.IRoomService;
@@ -17,4 +18,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class RoomServiceImpl extends ServiceImpl<RoomMapper, Room> implements IRoomService {
 
+    @Override
+    public Room FindRoom(Integer roomId) {
+        Room room = new Room();
+        room = getById(roomId);
+        return room;
+    }
 }
