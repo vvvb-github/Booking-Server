@@ -52,7 +52,7 @@ public class ServerController {
     private IHotelService hotelService;
 
     @Autowired
-    private IOrderService orderService;
+    private IOrderService orderService;\
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public JSONObject Login(String email, String password){
