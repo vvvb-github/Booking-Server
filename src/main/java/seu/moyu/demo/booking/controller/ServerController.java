@@ -19,6 +19,7 @@ import seu.moyu.demo.booking.service.IRoomService;
 import seu.moyu.demo.booking.service.IUserService;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.UUID;
 
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ import java.sql.Wrapper;
  * @since 2021-01-01
  */
 @RestController
+@CrossOrigin(origins = "*",allowCredentials = "true")
 public class ServerController {
 
     private String IP = "http://64.64.228.191";
@@ -171,12 +173,14 @@ public class ServerController {
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
-    public JSONObject Search(String parameter, Date startTime, Date endTime, int customerNumber,String type, String location) {
+    public JSONObject Search(String parameter, String startTime, String endTime, int customerNumber,String type, String location) {
         JSONObject jsonObject = new JSONObject();
         try{
-            List<Hotel> res = hotelService.Search(parameter);
+            System.out.println("yes");
+            List<Hotel> res = hotelService.Search(parameter,location);
+            Collections.shuffle(res);
             jsonObject.put("status", 200);
-            jsonObject.put("List<Hotel>", res);
+            jsonObject.put("hotelList", res);
         }
         catch(Exception e){
             e.printStackTrace();
@@ -229,18 +233,22 @@ public class ServerController {
         return jsonObject;
     }
 
-    @RequestMapping(value = "/reserve",method = RequestMethod.GET)
-    public JSONObject Reserve(String token, Integer hotelId, Integer roomId, double price,Date startTime, Date endTime,Integer customerNumber) {
+    @RequestMapping(value = "/reserve",method = RequestMethod.POST)
+    public JSONObject Reserve(
+            @RequestBody JSONObject params) {
+        System.out.println(params);
+        Date startTime = (Date) params.get("startTime");
+        System.out.println(startTime);
         JSONObject jsonObject = new JSONObject();
-        try{
-            int res = orderService.ReserveHotel(token,hotelId,roomId,price,startTime,endTime,customerNumber);
-            jsonObject.put("status",200);
-        }
-        catch(Exception e){
-            e.printStackTrace();
-            jsonObject.put("status", 500);
-            jsonObject.put("msg", "登录失效，请刷新！");
-        }
+//        try{
+//            int res = orderService.ReserveHotel(token,hotelId,roomId,price,startTime,endTime,customerNumber);
+//            jsonObject.put("status",200);
+//        }
+//        catch(Exception e){
+//            e.printStackTrace();
+//            jsonObject.put("status", 500);
+//            jsonObject.put("msg", "登录失效，请刷新！");
+//        }
         return jsonObject;
     }
 
@@ -250,15 +258,17 @@ public class ServerController {
         try{
             if(token.equals("")){
                 jsonObject.put("status", 500);
+                jsonObject.put("state",false);
                 jsonObject.put("msg","未登录");
             }
             else{
+                jsonObject.put("state",true);
                 jsonObject.put("status", 200);
             }
         }
         catch (Exception e){
             e.printStackTrace();
-            jsonObject.put("status", 500);
+            jsonObject.put("status", 502);
             jsonObject.put("msg","未知错误");
         }
         return jsonObject;
@@ -328,8 +338,10 @@ public class ServerController {
     public JSONObject Code(String email, String code) {
         JSONObject jsonObject = new JSONObject();
         try{
+            System.out.println("yes");
             userService.sendSimpleMail(email,"摸鱼大队验证码",code);
             jsonObject.put("status",200);
+            System.out.println("shizheli");
         }
         catch(Exception e){
             e.printStackTrace();

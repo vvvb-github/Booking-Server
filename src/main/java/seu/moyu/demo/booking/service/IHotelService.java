@@ -14,6 +14,6 @@ import java.util.List;
  * @since 2021-01-01
  */
 public interface IHotelService extends IService<Hotel> {
-    public List<Hotel> Search(String parameter);
+    public List<Hotel> Search(String parameter,String location);
     public Hotel FindHotel(Integer hotelId);
 }
