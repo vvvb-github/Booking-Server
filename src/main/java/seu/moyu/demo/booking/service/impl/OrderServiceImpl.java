@@ -1,6 +1,7 @@
 package seu.moyu.demo.booking.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import seu.moyu.demo.booking.entity.Order;
 import seu.moyu.demo.booking.mapper.OrderMapper;
@@ -86,5 +87,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         return order;
     }
 
-
+    @Override
+    public void Complete(Integer orderID) {
+        UpdateWrapper wrapper = new UpdateWrapper();
+        wrapper.eq("uuid", orderID);
+        Order order = getById(orderID);
+        order.setState(1);
+        update(order, wrapper);
+    }
 }

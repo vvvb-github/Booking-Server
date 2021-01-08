@@ -20,4 +20,6 @@ public interface IOrderService extends IService<Order> {
     public int ReserveHotel(String token,Integer hotelId,Integer roomId,double price,Date startTime,Date endTime,Integer customerNumber);
 
     public List<Order> FindOrder(String token);
+
+    public void Complete(Integer orderID);
 }

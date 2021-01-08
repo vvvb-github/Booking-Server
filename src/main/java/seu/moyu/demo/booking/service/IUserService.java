@@ -28,4 +28,6 @@ public interface IUserService extends IService<User> {
     public void ChangeInformation(String token,String nickName,String phoneNumber,String realName,String idCardNumber);
 
     public void sendSimpleMail(String to, String subject, String content);
+
+    public void SetIcon(Integer uuid, String path);
 }

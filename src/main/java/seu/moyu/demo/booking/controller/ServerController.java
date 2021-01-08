@@ -19,6 +19,8 @@ import seu.moyu.demo.booking.service.IRoomService;
 import seu.moyu.demo.booking.service.IUserService;
 
 import java.io.File;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.UUID;
 
@@ -40,7 +42,7 @@ import java.sql.Wrapper;
 @CrossOrigin(origins = "*",allowCredentials = "true")
 public class ServerController {
 
-    private String IP = "http://64.64.228.191";
+    private String IP = "http://www.kxhome.xyz:8094";
 
     @Autowired
     private IUserService userService;
@@ -52,7 +54,7 @@ public class ServerController {
     private IHotelService hotelService;
 
     @Autowired
-    private IOrderService orderService;\
+    private IOrderService orderService;
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public JSONObject Login(String email, String password){
@@ -156,7 +158,7 @@ public class ServerController {
                 jsonObject.put("status", 501);
                 jsonObject.put("msg", "订单信息错误，请刷新！");
             }
-            else if(res==-2){
+            else if(res == -2){
                 jsonObject.put("status", 502);
                 jsonObject.put("msg", "该订单不能退订！");
             }
@@ -195,34 +197,33 @@ public class ServerController {
         JSONObject jsonObject = new JSONObject();
         try{
             Hotel hotel = hotelService.FindHotel(hotelId);
-            String[] pic = hotel.getPictureUrl().split(",");
+            String[] pic = hotel.getPictureUrl().split(" ");
             List<String> pictureList = new ArrayList<>();
             for(int i = 0; i < pic.length; ++i){
                 pictureList.add(pic[i]);
             }
-            String[] rooms = hotel.getRoom().split(",");
-            List<Integer> roomList = new ArrayList<>();
+            String[] rooms = hotel.getRoom().split(" ");
+            List<JSONObject> roomList = new ArrayList<>();
             for(int i = 0; i < rooms.length; ++i){
-                roomList.add(Integer.parseInt(rooms[i]));
+                Integer roomID = Integer.parseInt(rooms[i]);
+                JSONObject room = new JSONObject();
+                Room rm = roomService.getById(roomID);
+                room.put("roomUUID", roomID);
+                room.put("roomPic", rm.getPictureUrl().split(" ")[0]);
+                room.put("roomName", rm.getTitle());
+                room.put("roomIntro", rm.getIntroduction());
+                room.put("roomPrice", rm.getPrice());
+                room.put("roomCapacity", rm.getPeopleNumber());
+                roomList.add(room);
             }
             jsonObject.put("hotelName",hotel.getHotelName());
             jsonObject.put("telNumber",hotel.getPhone());
             jsonObject.put("hotelIntro",hotel.getIntroduction());
             jsonObject.put("location",hotel.getLocation());
             jsonObject.put("locationDetail","");
-            jsonObject.put("star",hotel.getStars());
+            jsonObject.put("rate",hotel.getStars());
             jsonObject.put("pictureList",pictureList);
-            jsonObject.put("roomList",roomList);
-            jsonObject.put("features","");
-            for(int i = 0; i < roomList.size(); ++i) {
-                Room room = roomService.FindRoom(roomList.get(i));
-                jsonObject.put("roomId", room.getUuid());
-                jsonObject.put("roomPic", room.getPictureUrl());
-                jsonObject.put("roomName", room.getTitle());
-                jsonObject.put("roomIntro", room.getIntroduction());
-                jsonObject.put("roomPrice", room.getPrice());
-                jsonObject.put("roomCapacity", room.getPeopleNumber());
-            }
+            jsonObject.put("roomList", roomList);
             jsonObject.put("status",200);
         }
         catch(Exception e){
@@ -233,22 +234,23 @@ public class ServerController {
         return jsonObject;
     }
 
-    @RequestMapping(value = "/reserve",method = RequestMethod.POST)
-    public JSONObject Reserve(
-            @RequestBody JSONObject params) {
-        System.out.println(params);
-        Date startTime = (Date) params.get("startTime");
-        System.out.println(startTime);
+    @RequestMapping(value = "/reserve",method = RequestMethod.GET)
+    public JSONObject Reserve(String token, Integer hotelId, Integer roomId, Double price, String startTime, String endTime, Integer customerNumber) {
         JSONObject jsonObject = new JSONObject();
-//        try{
-//            int res = orderService.ReserveHotel(token,hotelId,roomId,price,startTime,endTime,customerNumber);
-//            jsonObject.put("status",200);
-//        }
-//        catch(Exception e){
-//            e.printStackTrace();
-//            jsonObject.put("status", 500);
-//            jsonObject.put("msg", "登录失效，请刷新！");
-//        }
+        try{
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            java.util.Date d = simpleDateFormat.parse(startTime);
+            Date startDate = new Date(d.getTime());
+            d = simpleDateFormat.parse(endTime);
+            Date endDate = new Date(d.getTime());
+            orderService.ReserveHotel(token,hotelId,roomId,price,startDate,endDate,customerNumber);
+            jsonObject.put("status",200);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            jsonObject.put("status", 500);
+            jsonObject.put("msg", "登录失效，请刷新！");
+        }
         return jsonObject;
     }
 
@@ -279,25 +281,31 @@ public class ServerController {
         JSONObject jsonObject = new JSONObject();
         try{
             List<Order> order = orderService.FindOrder(token);
+            List<JSONObject> orderList = new ArrayList<>();
             for(int i = 0;i < order.size();++i){
+                JSONObject jsonObject1 = new JSONObject();
                 Order newOrder = order.get(i);
-                jsonObject.put("orderId", newOrder.getUuid());
+                jsonObject1.put("orderID", newOrder.getUuid());
                 int roomId = newOrder.getRoomId();
                 int hotelId = newOrder.getHotelId();
+                System.out.println(roomId);
                 Room room = roomService.FindRoom(roomId);
                 Hotel hotel = hotelService.FindHotel(hotelId);
-                jsonObject.put("pictureUrl", room.getPictureUrl());
-                jsonObject.put("hotelName", hotel.getHotelName());
-                jsonObject.put("startTime", newOrder.getStartDate());
-                jsonObject.put("endTime", newOrder.getEndDate());
-                jsonObject.put("customerNumber", newOrder.getCustomerNumber());
-                jsonObject.put("price", newOrder.getPrice());
-                jsonObject.put("title", room.getTitle());
-                jsonObject.put("state", newOrder.getState());
-                jsonObject.put("star", newOrder.getStar());
-                jsonObject.put("hotelId", hotelId);
-                jsonObject.put("roomId",roomId);
+                System.out.println(room);
+                jsonObject1.put("pictureUrl", room.getPictureUrl().split(" ")[0]);
+                jsonObject1.put("hotelName", hotel.getHotelName());
+                jsonObject1.put("startTime", newOrder.getStartDate().toString());
+                jsonObject1.put("endTime", newOrder.getEndDate().toString());
+                jsonObject1.put("customerNumber", newOrder.getCustomerNumber());
+                jsonObject1.put("price", newOrder.getPrice());
+                jsonObject1.put("title", room.getTitle());
+                jsonObject1.put("state", newOrder.getState());
+                jsonObject1.put("star", newOrder.getStar());
+                jsonObject1.put("hotelId", hotelId);
+                jsonObject1.put("roomId",roomId);
+                orderList.add(jsonObject1);
             }
+            jsonObject.put("orderList", orderList);
             jsonObject.put("status",200);
         }
         catch(Exception e){
@@ -308,7 +316,7 @@ public class ServerController {
         return jsonObject;
     }
 
-    @RequestMapping(value = "/iconEdit",method = RequestMethod.POST)
+    @RequestMapping(value = "/icon-edit",method = RequestMethod.POST)
     public JSONObject IconEdit(String token,@RequestParam("file") MultipartFile multipartFile){
         JSONObject jsonObject = new JSONObject();
         try {
@@ -317,6 +325,7 @@ public class ServerController {
                 jsonObject.put("msg","上传失败");
                 return jsonObject;
             }
+            Integer userID = userService.AnalyzeToken(token);
             String serverPath = System.getProperty("user.dir") + "/images/";
             String uuid = UUID.randomUUID()	.toString();
             String suffixName = multipartFile.getOriginalFilename().
@@ -325,6 +334,7 @@ public class ServerController {
             File newFile = new File(path);
             multipartFile.transferTo(newFile);
             path = IP + "/images/" + uuid + suffixName;
+            userService.SetIcon(userID, path);
             jsonObject.put("status",1);
             jsonObject.put("url",path);
         }catch (Exception e){
@@ -347,6 +357,21 @@ public class ServerController {
             e.printStackTrace();
             jsonObject.put("status", 500);
             jsonObject.put("msg", "发送失败");
+        }
+        return jsonObject;
+    }
+
+    @RequestMapping(value = "/complete", method = RequestMethod.GET)
+    public JSONObject Complete(String token, Integer orderId) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            Integer userID = userService.AnalyzeToken(token);
+            orderService.Complete(orderId);
+            jsonObject.put("status", 200);
+        } catch (Exception e) {
+            e.printStackTrace();
+            jsonObject.put("status", 500);
+            jsonObject.put("msg", "您的登录已失效，请重新登录！");
         }
         return jsonObject;
     }

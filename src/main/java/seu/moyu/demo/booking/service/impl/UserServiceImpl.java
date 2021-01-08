@@ -71,6 +71,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
+    public void SetIcon(Integer uuid, String path) {
+        UpdateWrapper wrapper = new UpdateWrapper();
+        wrapper.eq("uuid", uuid);
+        User user = getById(uuid);
+        user.setIconUrl(path);
+        update(user, wrapper);
+    }
+
+    @Override
     public User CheckUser(String email, String password) {
         QueryWrapper wrapper = new QueryWrapper<User>();
         wrapper.eq("email", email);
@@ -121,10 +130,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         user.setEmail(email);
         user.setPassword(password);
         user.setNickName(userName);
-        user.setIconUrl("");
-        user.setIdCardNumber("empty");
-        user.setRealName("");
-        user.setPhoneNumber("");
+        user.setIconUrl("https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png");
+        user.setIdCardNumber("未知");
+        user.setRealName("未知");
+        user.setPhoneNumber("未知");
         save(user);
         return 1;
     }
