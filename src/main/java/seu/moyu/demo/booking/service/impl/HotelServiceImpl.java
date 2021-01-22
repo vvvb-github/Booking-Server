@@ -33,21 +33,24 @@ public class HotelServiceImpl extends ServiceImpl<HotelMapper, Hotel> implements
                     break;
                 }
         }
-        if(cnt * 2 >= a.length())return true;
+        if(cnt >= a.length())return true;
         return false;
     }
 
     @Override
-    public List<Hotel> Search(String parameter,String location) {
+    public List<Hotel> Search(String parameter,String location,String type) {
         List<Hotel> HotelList = list();
-        List<Hotel> res = new ArrayList<>();
+        List<Hotel> res = new ArrayList<>(),tmp = new ArrayList<>();
+        //if(location.equals("江苏"))location = "南京";
         int cnt = 0;
         for(int i = 0; i < HotelList.size() ; i++){
-            if(CheckString(parameter,HotelList.get(i).getHotelName()) == true && CheckString(location,HotelList.get(i).getLocation())){
-                res.add(HotelList.get(i));
-                cnt++;
+            if((location.equals("")||location.equals(HotelList.get(i).getLocation()))
+                    && CheckString(parameter,HotelList.get(i).getHotelName()) == true){
+                if(CheckString(type,HotelList.get(i).getHotelName()) == true)res.add(HotelList.get(i));
+                else tmp.add(HotelList.get(i));
             }
         }
+        for(int i=0;i<tmp.size();i++)res.add(tmp.get(i));
         return res;
     }
 

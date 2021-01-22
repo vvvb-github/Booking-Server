@@ -179,8 +179,8 @@ public class ServerController {
         JSONObject jsonObject = new JSONObject();
         try{
             System.out.println("yes");
-            List<Hotel> res = hotelService.Search(parameter,location);
-            Collections.shuffle(res);
+            List<Hotel> res = hotelService.Search(parameter,location,type);
+            //Collections.shuffle(res);
             jsonObject.put("status", 200);
             jsonObject.put("hotelList", res);
         }
